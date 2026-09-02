@@ -1,0 +1,129 @@
+# Doxyfile - Optimized for Read the Docs with Sphinx and Breathe
+
+# --- Project related tags ---
+
+PROJECT_NAME = "RAPID: Representative Approach for Particle-Integrated Disks"
+
+PROJECT_BRIEF = "Description of the code"
+
+PROJECT_NUMBER = 1.0
+
+
+# --- Build related tags ---
+
+# Doxygen's primary role here is to generate XML for Breathe.
+
+OUTPUT_DIRECTORY = .
+
+GENERATE_HTML = NO
+
+GENERATE_LATEX = NO
+
+GENERATE_RTF = NO
+
+GENERATE_MAN = NO
+
+GENERATE_XML = YES
+
+XML_OUTPUT = xml
+
+
+# --- Input related tags ---
+
+# RAPID is checked out next to the docs directory by the documentation build.
+
+INPUT = ../../dust_drift/include \
+        ../../dust_drift/extern/include
+
+RECURSIVE = YES
+
+FILE_PATTERNS = *.h \
+                *.hpp
+
+EXCLUDE_PATTERNS = */build/* \
+                   *~ \
+                   *.bak \
+                   *.bck
+
+
+# --- Source Browse related tags ---
+
+EXTRACT_ALL = NO
+
+EXTRACT_PRIVATE = NO
+
+EXTRACT_STATIC = NO
+
+HIDE_UNDOC_MEMBERS = YES
+
+HIDE_UNDOC_CLASSES = YES
+
+HIDE_FRIEND_COMPOUNDS = YES
+
+HIDE_IN_BODY_DOCS = YES
+
+
+# --- Warning and quality control ---
+
+WARN_NO_PARAMDOC = YES
+
+WARN_IF_UNDOCUMENTED = YES
+
+
+# --- Graphviz related tags ---
+
+HAVE_DOT = NO
+
+GRAPH_LEGEND = NO
+
+COLLABORATION_GRAPH = NO
+
+CALL_GRAPH = NO
+
+CALLER_GRAPH = NO
+
+DIRECTORY_GRAPH = NO
+
+DOT_FONTNAME = Helvetica
+
+DOT_FONTSIZE = 10
+
+DOT_PATH =
+
+
+# --- Other general settings ---
+
+INPUT_ENCODING = UTF-8
+
+OUTPUT_LANGUAGE = English
+
+OPTIMIZE_OUTPUT_FOR_C = YES
+
+MACRO_EXPANSION = YES
+
+EXPAND_ONLY_PREDEF = NO
+
+PREDEFINED =
+
+
+# --- Markdown support ---
+
+MARKDOWN_SUPPORT = YES
+
+AUTOLINK_SUPPORT = YES
+
+
+# --- Source code browsing ---
+
+SOURCE_BROWSER = NO
+
+INLINE_SOURCES = NO
+
+VERBATIM_HEADERS = NO
+
+
+# --- Other minor settings ---
+
+DOXYFILE_ENCODING = UTF-8
+
+SHOW_INCLUDE_FILES = NO
