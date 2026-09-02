@@ -32,8 +32,8 @@ XML_OUTPUT = xml
 
 # RAPID is checked out next to the docs directory by the documentation build.
 
-INPUT = ../../dust_drift/include \
-        ../../dust_drift/extern/include
+INPUT = ../RAPID/include \
+        ../RAPID/extern/include
 
 RECURSIVE = YES
 
