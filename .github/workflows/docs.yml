@@ -11,6 +11,10 @@ on:
     types: [rapid-release]
 
 jobs:
+
+  # ============================================================
+  #                       BUILD DOCUMENTATION
+  # ============================================================
   build-docs:
     name: Build documentation
     runs-on: ubuntu-latest
@@ -78,3 +82,69 @@ jobs:
         with:
           name: rapid-documentation
           path: docs/_build/html
+
+
+  # ============================================================
+  #                       GENERATE README
+  # ============================================================
+  generate-readme:
+    name: Generate RAPID README
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+
+      - name: Set RAPID tag
+        id: rapid
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.rapid_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.event.client_payload.rapid_tag }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout RAPID-docs
+        uses: actions/checkout@v4
+
+      - name: Generate README
+        env:
+          RAPID_TAG: ${{ steps.rapid.outputs.tag }}
+        shell: bash
+        run: |
+          RAPID_VERSION="${RAPID_TAG#v}"
+
+          sed \
+            -e "s|{{RAPID_VERSION}}|${RAPID_VERSION}|g" \
+            -e "s|{{RAPID_TAG}}|${RAPID_TAG}|g" \
+            .github/templates/README.md.tmpl > /tmp/README.md
+
+      - name: Checkout RAPID
+        uses: actions/checkout@v4
+        with:
+          repository: tnehezd/RAPID
+          path: RAPID
+          token: ${{ secrets.RAPID_README_TOKEN }}
+          fetch-depth: 0
+
+      - name: Update RAPID README
+        working-directory: RAPID
+        env:
+          RAPID_TAG: ${{ steps.rapid.outputs.tag }}
+        run: |
+          cp /tmp/README.md README.md
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add README.md
+
+          if git diff --cached --quiet; then
+            echo "README.md is already up to date."
+            exit 0
+          fi
+
+          git commit -m "docs: update README for ${RAPID_TAG}"
+          git push origin main
