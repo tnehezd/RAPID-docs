@@ -88,7 +88,7 @@ jobs:
   #                       GENERATE README
   # ============================================================
   generate-readme:
-    name: Generate RAPID README
+    name: Generate README
     runs-on: ubuntu-latest
 
     permissions:
@@ -108,6 +108,8 @@ jobs:
 
       - name: Checkout RAPID-docs
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Generate README
         env:
@@ -119,23 +121,13 @@ jobs:
           sed \
             -e "s|{{RAPID_VERSION}}|${RAPID_VERSION}|g" \
             -e "s|{{RAPID_TAG}}|${RAPID_TAG}|g" \
-            .github/templates/README.md.tmpl > /tmp/README.md
+            .github/templates/README.md.tmpl > README.md
 
-      - name: Checkout RAPID
-        uses: actions/checkout@v4
-        with:
-          repository: tnehezd/RAPID
-          path: RAPID
-          token: ${{ secrets.RAPID_README_TOKEN }}
-          fetch-depth: 0
-
-      - name: Update RAPID README
-        working-directory: RAPID
+      - name: Commit README
         env:
           RAPID_TAG: ${{ steps.rapid.outputs.tag }}
+        shell: bash
         run: |
-          cp /tmp/README.md README.md
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
