@@ -6,9 +6,10 @@ RAPID Notebooks
 This section provides interactive Jupyter notebooks demonstrating
 the functionality and usage of the RAPID simulation code.
 
+
+
 .. toctree::
    :maxdepth: 2
-   :caption: Notebooks
    :glob:
 
-   notebooks/*.ipynb
+   notebooks/*
