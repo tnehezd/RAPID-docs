@@ -15,9 +15,12 @@ jobs:
   # ============================================================
   #                       BUILD DOCUMENTATION
   # ============================================================
-  build-docs:
-    name: Build documentation
-    runs-on: ubuntu-latest
+build-docs:
+  name: Build documentation
+  runs-on: ubuntu-latest
+
+  permissions:
+    contents: write
 
     steps:
 
