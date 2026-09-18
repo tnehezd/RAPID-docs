@@ -12,18 +12,19 @@ on:
 
 jobs:
 
+jobs:
+
   # ============================================================
   #                       BUILD DOCUMENTATION
   # ============================================================
-build-docs:
-  name: Build documentation
-  runs-on: ubuntu-latest
+  build-docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
 
-  permissions:
-    contents: write
+    permissions:
+      contents: write
 
     steps:
-
       - name: Checkout RAPID-docs
         uses: actions/checkout@v4
 
@@ -65,7 +66,6 @@ build-docs:
           RAPID_TAG: ${{ steps.rapid.outputs.tag }}
         run: |
           RAPID_VERSION="${RAPID_TAG#v}"
-
           sed -i \
             "s/^release = .*/release = '${RAPID_VERSION}'/" \
             docs/conf.py
@@ -92,18 +92,13 @@ build-docs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
           git add docs/notebooks/
-
           if git diff --cached --quiet; then
             echo "Notebooks are already up to date."
             exit 0
           fi
-
           git commit -m "docs: sync RAPID notebooks"
           git push origin HEAD:main
-
-    
 
       - name: Build Sphinx documentation
         working-directory: docs
@@ -115,6 +110,60 @@ build-docs:
         with:
           name: rapid-documentation
           path: docs/_build/html
+
+
+  # ============================================================
+  #                       GENERATE README
+  # ============================================================
+  generate-readme:
+    name: Generate README
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Set RAPID tag
+        id: rapid
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.rapid_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.event.client_payload.rapid_tag }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout RAPID-docs
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate README
+        env:
+          RAPID_TAG: ${{ steps.rapid.outputs.tag }}
+        shell: bash
+        run: |
+          RAPID_VERSION="${RAPID_TAG#v}"
+          sed \
+            -e "s|{{RAPID_VERSION}}|${RAPID_VERSION}|g" \
+            -e "s|{{RAPID_TAG}}|${RAPID_TAG}|g" \
+            .github/templates/README.md.tmpl > README.md
+
+      - name: Commit README
+        env:
+          RAPID_TAG: ${{ steps.rapid.outputs.tag }}
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if git diff --cached --quiet; then
+            echo "README.md is already up to date."
+            exit 0
+          fi
+          git commit -m "docs: update README for ${RAPID_TAG}"
+          git push origin main
+
 
 
   # ============================================================
