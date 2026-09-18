@@ -71,7 +71,13 @@ jobs:
         working-directory: docs
         run: |
           doxygen Doxyfile
-      
+
+      - name: Debug workspace
+        run: |
+          echo "Workspace:"
+          ls -R .
+
+    
       - name: Copy RAPID notebooks
         run: |
           mkdir -p docs/notebooks
