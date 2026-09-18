@@ -24,6 +24,14 @@ dust accumulation and planetesimal formation nurseries with high computational e
 
 .. toctree::
    :maxdepth: 2
+   :caption: RAPID Notebooks
+   :glob:
+
+   ../RAPID/notebooks/*.ipynb
+
+
+.. toctree::
+   :maxdepth: 2
    :caption: User Guide
    
    api_reference

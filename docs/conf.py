@@ -15,7 +15,11 @@ release = '2.3.0'
 extensions = [
     'sphinx_rtd_theme',
     'breathe',
+    'myst_nb',
 ]
+
+nb_execution_mode = "off"
+
 
 templates_path = ['_templates']
 exclude_patterns = []
