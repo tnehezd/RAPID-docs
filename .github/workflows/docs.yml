@@ -71,6 +71,12 @@ jobs:
         working-directory: docs
         run: |
           doxygen Doxyfile
+      
+      - name: Copy RAPID notebooks
+        run: |
+          mkdir -p docs/notebooks
+          cp -r RAPID/notebooks/* docs/notebooks/
+    
 
       - name: Build Sphinx documentation
         working-directory: docs
