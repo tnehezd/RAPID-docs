@@ -321,8 +321,8 @@ When running from the source repository, use the Python wrapper instead:
 Replace ``config.yaml`` with the path to the desired configuration file.
 
 
-5. Expected output
-------------------
+Expected output
+===============
 
 
 Upon successful execution, ``RAPID`` prints an initialization summary and a live progress panel to the terminal. These report the code version, the active physical modules, the main disk and dust parameters, the current simulation time, the time step, and the disk mass. The verbosity can be controlled using the ``info_level`` setting in the YAML configuration file (``none``, ``info``, or ``debug``). For notebook-based execution, the terminal panels can be disabled by setting:
