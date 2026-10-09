@@ -216,11 +216,6 @@ where :math:`M_i` is the total dust mass assigned to cell :math:`i`, and :math:`
 
 The routine ``calculateDustSurfaceDensity`` provides four mapping and smoothing schemes:
 
-.. figure:: fig_06.png
-   :align: center
-   :width: 100%
-
-   Comparison of the four mapping and smoothing modes (NGP, CIC, TopHat, and Gaussian) across three test profiles: a steep jump modeling a snowline (left), a pulse train illustrating discrete sampling (middle), and a narrow density pile-up at a pressure maximum (right). Insets highlight the local behavior of each method near sharp gradients.
 
 1. **Nearest Grid Point (NGP)**
 
@@ -309,7 +304,7 @@ The routine ``calculateDustSurfaceDensity`` provides four mapping and smoothing 
 
    where the cutoff is applied according to the physical distance from the kernel center. This method provides controlled smoothing while retaining narrow structures.
 
-To illustrate the numerical behavior and dissipation characteristics of these algorithms, the methods were tested on three artificial density profiles. The left panel of :numref:`fig:smoothingalgs` shows a steep surface-density jump, representative of a planetary snowline where volatile species condense or evaporate. This profile tests the ability of each method to preserve sharp boundaries without excessive numerical diffusion.
+To illustrate the numerical behavior and dissipation characteristics of these algorithms, the methods were tested on three artificial density profiles. 
 
 The middle panel shows a pulse train that illustrates sampling artifacts. As particles drift across the grid towards the central star, the discrete mapping can leave some Eulerian cells unpopulated while neighbouring cells accumulate multiple particles, resulting in substantial shot noise.
 
@@ -320,11 +315,6 @@ The choice of mapping and smoothing scheme depends on the purpose of the simulat
 Field-Dependent Boundary Condition Approach
 -------------------------------------------
 
-.. figure:: fig_07.png
-   :align: center
-   :width: 90%
-
-   Evolution of the gas surface density (:math:`\Sigma`, left panels) and gas radial velocity (:math:`v_{\mathrm{g}}`, right panels) from :math:`t=0` to :math:`30\,\mathrm{kyr}` for boundary condition types 0–4. The initial state follows a power-law surface-density profile with a localized Gaussian perturbation centered at :math:`r=1.8`. The initial velocity field is derived from these conditions. Vertical dotted red lines mark the physical disk boundaries, :math:`r_{\min}=1.0` and :math:`r_{\max}=3.0`, and indicate the neighbouring ghost cells. All simulations use a linear grid.
 
 Applying the explicit finite-difference scheme to the calculated fields—including the gas surface density :math:`\Sigma_{\mathrm{g}}`, pressure :math:`P`, pressure gradient :math:`\partial P/\partial r`, and gas radial velocity :math:`v_{\mathrm{r,g}}`—requires updating the ghost cells at the inner and outer grid boundaries. The ghost-cell indices are :math:`i=0` and :math:`i=N_{\mathrm{grid}}+1`, respectively.
 
@@ -426,4 +416,3 @@ The reflecting condition mirrors the field symmetrically across the active bound
 
 This condition prevents flux through the boundaries, but also reflects waves back into the computational domain.
 
-Figures :numref:`fig:sigma_vg_evolution` and :numref:`fig:pressure_dpdr_evolution` show the evolution of a fiducial disk over :math:`30\,\mathrm{kyr}` for all five boundary condition types. The initial surface-density profile follows a power law (see :eq:`sigmapower`) with a localized Gaussian perturbation centered at :math:`r=1.8\,\mathrm{AU}`. The grid extends from :math:`1.0` to :math:`3.0\,\mathrm{AU}` and contains 100 equidistant cells.
