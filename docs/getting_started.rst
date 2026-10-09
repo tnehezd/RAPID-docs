@@ -2,10 +2,10 @@ Getting started
 ===============
 
 
-RAPID can be run either by compiling the source code from the GitHub repository or by installing the pre-built `rapidsim` Python package. Both approaches use the same simulation engine and support configuring simulations through command-line arguments or a YAML configuration file. The Python package provides a convenient way to run simulations without compiling the native code manually.
+``RAPID`` can be run either by compiling the source code from the GitHub repository or by installing the pre-built `rapidsim` Python package. Both approaches use the same simulation engine and support configuring simulations through command-line arguments or a YAML configuration file. The Python package provides a convenient way to run simulations without compiling the native code manually.
 
-1. Get the source code
-----------------------
+1. Get the source code from GitHub
+----------------------------------
 
 The complete RAPID source code is available from the `RAPID GitHub repository <https://github.com/tnehezd/RAPID>`_.
 
@@ -27,14 +27,31 @@ To compile the code locally, run:
 
 This builds the native simulation executable at `bin/simulation`. A compatible C compiler and the dependencies required by the build system must be available in the environment.
 
-2. Run RAPID from the source repository
----------------------------------------
+I. Run RAPID from the source repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The compiled executable can be run directly using command-line arguments. To display the available options, execute:
 
 .. code-block:: console
 
   $ ./bin/simulation --help
+
+
+The native simulation executable can be run directly. For example, the following command enables dust drift, dust growth, gas evolution, and two dust populations:
+
+.. code-block:: bash
+
+   ./bin/simulation -drift 1 -growth 1 -evol 1 -twopop 1
+
+To display all available command-line options, run:
+
+.. code-block:: bash
+
+   ./bin/simulation --help
+
+The complete list of command-line switches, descriptions, default values, and units is provided in Table :ref:`yaml_configuration_keys`.
+
+----
 
 Alternatively, the repository provides a Python wrapper that reads simulation settings from a YAML configuration file and translates them into the command-line arguments expected by the executable. The wrapper requires Python 3.9 or newer and the PyYAML package.
 
@@ -50,12 +67,14 @@ Then launch a simulation using a configuration file:
 
   $ python3 run_simulation.py --config config.yaml
 
-The wrapper locates the compiled executable, passes the parameters specified in the YAML file, and streams the simulation output to the terminal.
+The wrapper locates the compiled executable, passes the parameters specified in the YAML file, and executes the simulation, outputting the results to the terminal and to the specified output directory.
 
-3. Install the pre-built Python package
+----
+
+2. Install the ``rapidsim`` Python package
 ---------------------------------------
 
-For users who do not need to modify or compile the source code, RAPID is also available as the `rapidsim` package on PyPI. The package includes the compiled simulation executable and can be installed using:
+For users who do not need to modify or compile the source code, ``RAPID`` is also available as the `rapidsim` package on PyPI. The package includes the compiled simulation executable and can be installed using:
 
 .. code-block:: console
 
@@ -75,10 +94,11 @@ A simulation can then be launched directly from the command line:
 
 The PyPI package provides pre-built binaries for supported platforms, eliminating the need to compile RAPID locally. Python 3.9 or newer is required.
 
-4. Configure a simulation
--------------------------
 
-RAPID can be configured either through a YAML configuration file or directly through command-line switches. The YAML interface groups related parameters into named sections, while direct command-line execution allows individual parameters to be specified when launching the native simulation executable.
+Understanding YAML configuration files
+======================================
+
+``RAPID`` can be configured either through a YAML configuration file or directly through command-line switches. The YAML interface groups related parameters into named sections, while direct command-line execution allows individual parameters to be specified when launching the native simulation executable.
 
 YAML configuration
 ~~~~~~~~~~~~~~~~~~
@@ -98,6 +118,7 @@ The following table lists the YAML keys, their corresponding command-line switch
 
 .. list-table:: YAML configuration keys and corresponding CLI switches
    :header-rows: 1
+   :name: yaml_configuration_keys
    :widths: 40 35 25
 
    * - YAML section / key
@@ -299,29 +320,12 @@ When running from the source repository, use the Python wrapper instead:
 
 Replace ``config.yaml`` with the path to the desired configuration file.
 
-Direct command-line execution
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The native simulation executable can also be run directly, without a YAML file or the Python wrapper. For example, the following command enables dust drift, dust growth, gas evolution, and two dust populations:
-
-.. code-block:: bash
-
-   ./bin/simulation -drift 1 -growth 1 -evol 1 -twopop 1
-
-To display all available command-line options, run:
-
-.. code-block:: bash
-
-   ./bin/simulation --help
-
-The complete list of command-line switches, descriptions, default values, and units is provided in the command-line reference.
-
 
 5. Expected output
 ------------------
 
 
-Upon successful execution, RAPID prints an initialization summary and a live progress panel to the terminal. These report the code version, the active physical modules, the main disk and dust parameters, the current simulation time, the time step, and the disk mass. The verbosity can be controlled using the ``info_level`` setting in the YAML configuration file (``none``, ``info``, or ``debug``). For notebook-based execution, the terminal panels can be disabled by setting:
+Upon successful execution, ``RAPID`` prints an initialization summary and a live progress panel to the terminal. These report the code version, the active physical modules, the main disk and dust parameters, the current simulation time, the time step, and the disk mass. The verbosity can be controlled using the ``info_level`` setting in the YAML configuration file (``none``, ``info``, or ``debug``). For notebook-based execution, the terminal panels can be disabled by setting:
 
 .. code-block:: yaml
 
@@ -462,7 +466,7 @@ HDF5 files can be inspected from the terminal using ``h5ls`` or ``h5dump``:
    $ h5ls -r snapshot_00000000.h5
    $ h5dump -d gas_grid/surface_density snapshot_00000000.h5
 
-Snapshots can also be read and analyzed using ``h5py`` :cite:`h5py`:
+Snapshots can also be read and analyzed using ``h5py``:
 
 .. code-block:: python
 
