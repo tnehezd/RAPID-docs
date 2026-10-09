@@ -74,12 +74,12 @@ rapidsim --config config.yaml
 The PyPI package provides pre-built binaries for supported platforms, eliminating the need to compile RAPID locally. Python 3.9 or newer is required.
 
 4. Configure a simulation
-=========================
+-------------------------
 
 RAPID can be configured either through a YAML configuration file or directly through command-line switches. The YAML interface groups related parameters into named sections, while direct command-line execution allows individual parameters to be specified when launching the native simulation executable.
 
 YAML configuration
-------------------
+~~~~~~~~~~~~~~~~~~
 
 The YAML configuration file contains the following sections:
 
@@ -264,7 +264,7 @@ When running from the source repository, use the Python wrapper instead:
 Replace ``config.yaml`` with the path to the desired configuration file.
 
 Direct command-line execution
------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The native simulation executable can also be run directly, without a YAML file or the Python wrapper. For example, the following command enables dust drift, dust growth, gas evolution, and two dust populations:
 
@@ -281,9 +281,158 @@ To display all available command-line options, run:
 The complete list of command-line switches, descriptions, default values, and units is provided in the command-line reference.
 
 
-5. Output and further documentation
------------------------------------
+5. Expected output
+------------------
 
-After a simulation finishes, RAPID writes the results to the output directory specified in the configuration file. Depending on the selected output format, the simulation snapshots are stored as ASCII text files or HDF5 files. Diagnostic and runtime information is also generated.
 
-For more information about the simulation parameters, output files, example configurations, and benchmark tests, consult the [RAPID documentation](https://rapiddocs.readthedocs.io/en/latest/).
+Upon successful execution, RAPID prints an initialization summary and a live progress panel to the terminal. These report the code version, the active physical modules, the main disk and dust parameters, the current simulation time, the time step, and the disk mass. The verbosity can be controlled using the ``info_level`` setting in the YAML configuration file (``none``, ``info``, or ``debug``). For notebook-based execution, the terminal panels can be disabled by setting:
+
+.. code-block:: yaml
+
+   log_parameters:
+     disable_terminal_panels: true
+
+A typical initialization output is shown in Figure :ref:`rapid_init_output`. During the main simulation loop, RAPID displays a live progress panel, as illustrated for a pure-gas accretion run in Figure :ref:`main_loop` in Appendix :ref:`terminal_outputs`. The panel is updated as the simulation advances, with output corresponding to the snapshots written during the run. The output frequency is controlled by ``output_write_frequency`` in the YAML configuration or the ``-outfreq`` command-line option.
+
+Figure :ref:`benchmark_terminal` shows the terminal output of a benchmark test run without the real-time status panel. Benchmark output differs slightly from that of standard simulations: it explicitly identifies the active test and highlights physical modules that are disabled or overridden for the benchmark. The ``ring_test.ipynb`` notebook, available in the GitHub repository and the official documentation, provides an example of benchmark analysis.
+
+Output files are written to the directory specified by the ``-o`` command-line option or the ``output_directory_name`` YAML setting. A typical output directory contains the following:
+
+* ``config/`` — processed configuration files, including ``disk_config.dat``, ``initial_gas_profile.dat``, and, when applicable, ``initial_dust_profile.dat``.
+* ``LOGS/`` — diagnostic files and simulation snapshots.
+* ``current_run_info.dat`` — metadata describing the simulation.
+* ``current_runtime_performance_info.dat`` — timing and performance statistics.
+
+The exact files in ``LOGS/`` depend on the selected output format and the active physical modules. For example, HDF5 output may contain files such as:
+
+.. code-block:: text
+
+   snapshot_00000000.h5
+   snapshot_00010000.h5
+   snapshot_00020000.h5
+   ...
+   snapshot_00090000.h5
+   ...
+   mass_accumulation_dze_edge.h5
+
+ASCII output may contain files such as:
+
+.. code-block:: text
+
+   density_profile_00000000.dat
+   dust_size_evolution_00000000.dat
+   dust_density_profile_00000000.dat
+   micron_dust_size_evolution_00000000.dat
+   dust_micron_density_profile_00000000.dat
+   ...
+   density_profile_00090000.dat
+   dust_size_evolution_00090000.dat
+   dust_density_profile_00090000.dat
+   micron_dust_size_evolution_00090000.dat
+   dust_micron_density_profile_00090000.dat
+   ...
+
+The ``ascii`` output format stores radial profiles as plain numerical text files that can be inspected with a text editor or processed using standard command-line tools. The ``hdf5`` format stores the simulation state in a structured binary format, allowing compact storage and efficient access to individual datasets during post-processing.
+
+In the current version, benchmark runs generate ASCII profile files and a summary file. For example, a ring-viscosity benchmark may produce:
+
+.. code-block:: text
+
+   ring_profile_t_000000.dat
+   ring_profile_t_020000.dat
+   ...
+   ring_viscous_summary.dat
+
+Benchmark output files can be read directly by the analysis notebooks provided with RAPID.
+
+HDF5 snapshot structure
+-----------------------
+
+When ``output_format`` is set to ``hdf5``, RAPID writes each snapshot to a structured HDF5 file containing the disk state at a particular simulation time. A representative snapshot, ``snapshot_00000000.h5``, with 1000 grid cells and 5000 particles, contains the groups and datasets listed in Table :ref:`hdf5_snapshot_structure`.
+
+.. list-table:: Dataset structure of a representative RAPID HDF5 snapshot (``snapshot_00000000.h5``).
+   :name: hdf5_snapshot_structure
+   :header-rows: 1
+   :widths: 20 25 45 10
+
+   * - Group
+     - Dataset
+     - Meaning
+     - Size
+   * - ``gas_grid``
+     - ``radial_grid``
+     - Cell-face radii defining the radial grid
+     - 1000
+   * - ``gas_grid``
+     - ``surface_density``
+     - Gas surface density, \(\Sigma_{\rm g}\)
+     - 1000
+   * - ``gas_grid``
+     - ``radial_velocity``
+     - Gas radial velocity, \(v_{r,g}\)
+     - 1000
+   * - ``gas_grid``
+     - ``pressure``
+     - Midplane gas pressure, \(P\)
+     - 1000
+   * - ``gas_grid``
+     - ``pressure_gradient``
+     - Radial pressure gradient, \(\partial P/\partial r\)
+     - 1000
+   * - ``dust_grid``
+     - ``surface_density``
+     - Dust surface density, \(\Sigma_{\rm d}\), mapped onto the radial grid
+     - 1000
+   * - ``particles``
+     - ``index``
+     - Particle identifiers
+     - 5000
+   * - ``particles``
+     - ``position``
+     - Particle radial positions
+     - 5000
+   * - ``particles``
+     - ``size``
+     - Particle sizes
+     - 5000
+   * - ``frame``
+     - ``time``
+     - Physical simulation time of the snapshot
+     - 1
+
+The file is organized into four top-level groups: ``gas_grid``, ``dust_grid``, ``particles``, and ``frame``.
+
+**Gas grid.** The ``gas_grid`` group contains gas-related fields. The ``radial_grid`` dataset stores the cell-face radii, while the other gas datasets are defined at cell centers:
+
+* ``surface_density`` — gas surface density, \(\Sigma_{\rm g}\);
+* ``radial_velocity`` — gas radial velocity, \(v_{r,g}\);
+* ``pressure`` — midplane gas pressure, \(P\);
+* ``pressure_gradient`` — radial pressure gradient, \(\partial P/\partial r\).
+
+**Dust grid.** When dust evolution is enabled, the ``dust_grid`` group contains the dust surface density profile, \(\Sigma_{\rm d}\), mapped onto the same radial grid.
+
+**Particles.** When dust particles are active, the ``particles`` group stores their properties:
+
+* ``index`` — particle identifiers;
+* ``position`` — radial positions;
+* ``size`` — particle sizes.
+
+**Frame metadata.** The ``frame`` group contains snapshot-level metadata, including ``time``, the physical simulation time represented by the snapshot.
+
+HDF5 files can be inspected from the terminal using ``h5ls`` or ``h5dump``:
+
+.. code-block:: console
+
+   $ h5ls -r snapshot_00000000.h5
+   $ h5dump -d gas_grid/surface_density snapshot_00000000.h5
+
+Snapshots can also be read and analyzed using ``h5py`` :cite:`h5py`:
+
+.. code-block:: python
+
+   import h5py
+
+   with h5py.File("snapshot_00000000.h5", "r") as f:
+       print(f["gas_grid/surface_density"][:10])
+
+If dust evolution is enabled in a disk with an embedded dead zone, RAPID may also produce the diagnostic file ``mass_accumulation_dze_edge.h5`` in the ``LOGS/`` directory. This file stores the time evolution of pressure-trap properties in the ``trap_evolution`` group. Its datasets include ``primary_mass``, ``secondary_mass``, ``total_mass``, ``trap_position``, and ``time``. They track the accumulated masses of the primary and secondary dust populations at the pressure-trap location, along with the trap position and simulation time. The extendable datasets are updated at each snapshot output, so their entries correspond to the simulation times at which snapshots are written.
