@@ -251,6 +251,40 @@ The following table lists the YAML keys, their corresponding command-line switch
      - ``-no_panels``
      - ``false``
 
+A typical YAML configuration file should be structured as follows:
+
+.. code-block:: yaml
+    # example YAML config file
+
+    simulation_parameters:
+    # Simulation Control Options 
+    enable_dust_drift:           false     
+    enable_dust_growth:          false     
+    enable_gas_evolution:        true    
+    enable_two_dust_populations: false 
+    enable_photoevaporation:     false      
+    
+    disk_parameters:
+    # Grid and Disk Initial Parameters 
+    number_of_grid_points:   500    
+    inner_radius_au:         1           
+    outer_radius_au:         50.0         
+    disk_mass:               0.01              
+    sigma_profile_exponent: -1.0  
+    alpha_viscosity:         0.01      
+    aspect_ratio_at_1au:     0.05    
+
+    output_parameters:
+    # File I/O Parameters
+    output_directory_name: "output"    
+    output_format:         "ascii"               
+
+    time_parameters:
+    # Time Parameters
+    total_simulation_time:  1e5       
+    output_write_frequency: 1000
+        
+
 To run a simulation using a YAML configuration file, execute:
 
 .. code-block:: bash
