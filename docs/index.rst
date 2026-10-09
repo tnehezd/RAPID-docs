@@ -1,7 +1,7 @@
 .. Your C Project Name documentation master file, created by
    sphinx-quickstart.
 
-Welcome to the Documentation of the RAPID Simulation Code
+The Documentation of the RAPID Simulation Code
 =========================================================
 
 **RAPID** (Representative Approach for Particle-Integrated Disks) is a high-performance 1D numerical framework 
@@ -20,7 +20,13 @@ dust accumulation and planetesimal formation nurseries with high computational e
    self          
    intro.rst
    getting_started.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: The RAPID model
+
    physical_background.rst
+   numerical_impl.rst
 
 .. toctree::
    :maxdepth: 2

@@ -57,3 +57,13 @@ The actual particle size :math:`a` is the minimum of the exponential growth valu
 
 .. math::
    a = \min(a_{frag}, a_{drift}, a_{df}, a_0 e^{t/\tau_{grow}})
+
+
+Photoevaporation
+----------------
+
+RAPID includes prescriptions for internally driven photoevaporation, in which high-energy radiation from the central star heats disk gas and drives a wind. The resulting mass loss can compete with viscous accretion, leading to the formation of a gap and ultimately contributing to disk dispersal.
+
+Two photoevaporation prescriptions are available, based on the models of Owen et al. and Picogna et al. They differ in their adopted mass-loss profiles and can produce different gap locations and disk dispersal timescales.
+
+Detailed governing equations for the gas and dust components, including the viscosity prescription, dust radial drift, grain-size barriers, dead-zone model, and photoevaporation, are presented in the following section.
