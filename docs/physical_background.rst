@@ -3,11 +3,11 @@ Physical Background
 
 The RAPID code (Representative Approach for Particle-Integrated Disks) is designed to simulate the coupled evolution of gas and dust in protoplanetary disks. It uses a 1D (radial) framework assuming an axisymmetric, vertically thin disk.
 
-Numerical Approach: Hybrid Euler-Lagrange
------------------------------------------
+Hybrid Euler-Lagrangian Approach
+--------------------------------
 RAPID combines two distinct numerical descriptions:
 1. **Eulerian Grid (Gas):** The gas surface density is evolved on a fixed radial grid using a finite-difference scheme.
-2. **Lagrangian Particles (Dust):** The solid phase is modeled using an ensemble of $N_p$ representative particles. Each particle represents the dust mass of a specific annulus and is tracked individually through the evolving gas disk.
+2. **Lagrangian Particles (Dust):** The solid phase is modeled using an ensemble of :math:`N_p` representative particles. Each particle represents the dust mass of a specific annulus and is tracked individually through the evolving gas disk.
 
 Gas Dynamics
 ------------
@@ -16,7 +16,7 @@ The evolution of the gas surface density :math:`\Sigma_g` is governed by the vis
 .. math::
    \frac{\partial \Sigma_g}{\partial t} = \frac{3}{r} \frac{\partial}{\partial r} \left[ r^{1/2} \frac{\partial}{\partial r} \left(\nu \Sigma_g r^{1/2}\right) \right]
 
-The kinematic viscosity :math:`\nu` follows the Shakura-Sunyaev $\alpha$-prescription:
+The kinematic viscosity :math:`\nu` follows the Shakura-Sunyaev :math:`\alpha`-prescription:
 :math:`\nu = \alpha H c_s`.
 
 
