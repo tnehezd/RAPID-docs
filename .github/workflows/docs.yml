@@ -82,6 +82,18 @@ jobs:
           echo "Workspace:"
           ls -R .
 
+      - name: Debug RAPID checkout
+        run: |
+          echo "RAPID tag: ${{ steps.rapid.outputs.tag }}"
+          echo "Current directory:"
+          pwd
+          echo "Workspace contents:"
+          ls -la
+          echo "RAPID directory:"
+          ls -la RAPID || true
+          echo "RAPID notebooks:"
+          ls -la RAPID/notebooks || true          
+
       - name: Sync RAPID notebooks
         run: |
           rsync -av --delete \
