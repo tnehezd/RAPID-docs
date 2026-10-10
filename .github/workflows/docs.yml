@@ -85,8 +85,6 @@ jobs:
             docs/notebooks/
 
       - name: Commit synced notebooks
-        env:
-          GH_TOKEN: ${{ secrets.RAPID_DOCS_DISPATCH_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -96,6 +94,7 @@ jobs:
             exit 0
           fi
           git commit -m "docs: sync RAPID notebooks"
+          git pull --rebase origin main
           git push origin HEAD:main
 
       - name: Build Sphinx documentation
