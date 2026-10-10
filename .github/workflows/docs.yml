@@ -83,16 +83,20 @@ jobs:
           ls -R .
 
       - name: Debug RAPID checkout
+        env:
+          RAPID_TAG: ${{ steps.rapid.outputs.tag }}
         run: |
-          echo "RAPID tag: ${{ steps.rapid.outputs.tag }}"
-          echo "Current directory:"
-          pwd
-          echo "Workspace contents:"
-          ls -la
-          echo "RAPID directory:"
-          ls -la RAPID || true
-          echo "RAPID notebooks:"
-          ls -la RAPID/notebooks || true          
+          echo "Requested tag: ${RAPID_TAG}"
+          echo "Checked out commit:"
+          git -C RAPID log -1 --oneline
+          echo "Checked out branch/tag:"
+          git -C RAPID describe --tags --always
+          echo "Top-level files:"
+          ls -la RAPID/
+          echo "Notebook directory in this commit:"
+          git -C RAPID ls-tree HEAD notebooks/
+          echo "Notebook directory in main:"
+          git -C RAPID ls-tree origin/main notebooks/ || true        
 
       - name: Sync RAPID notebooks
         run: |
