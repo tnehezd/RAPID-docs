@@ -145,6 +145,10 @@ jobs:
           RAPID_TAG: ${{ steps.rapid.outputs.tag }}
         shell: bash
         run: |
+          if [ -z "${RAPID_TAG}" ]; then
+            echo "::error::RAPID tag is empty; cannot generate README."
+            exit 1
+          fi
           RAPID_VERSION="${RAPID_TAG#v}"
           sed \
             -e "s|{{RAPID_VERSION}}|${RAPID_VERSION}|g" \
