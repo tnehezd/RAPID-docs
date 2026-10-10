@@ -115,6 +115,7 @@ jobs:
   # ============================================================
   generate-readme:
     name: Generate README
+    needs: build-docs
     runs-on: ubuntu-latest
 
     permissions:
