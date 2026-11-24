@@ -43,6 +43,10 @@ The radial velocity of a dust particle :math:`u_{dust,r}` is given by:
 
 where :math:`St` is the Stokes number, representing the coupling strength between dust and gas.
 
+Calculations may use fixed physical grain sizes or size evolution through
+growth and fragmentation. The development version also offers constant-Stokes
+single-population drift calculations; in this mode the equivalent grain size
+adjusts to the local gas density.
 
 
 Particle Size Evolution (Growth Barriers)
@@ -58,6 +62,10 @@ The actual particle size :math:`a` is the minimum of the exponential growth valu
 .. math::
    a = \min(a_{frag}, a_{drift}, a_{df}, a_0 e^{t/\tau_{grow}})
 
+The fragmentation calibration factor ``-ffrag`` (default 0.37) multiplies
+both the turbulent and drift-induced fragmentation size barriers in the
+current development code. Earlier versions did not apply it to the latter
+barrier, so record the code version when comparing growth results.
 
 Photoevaporation
 ----------------

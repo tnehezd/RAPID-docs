@@ -7,7 +7,8 @@ copyright = '2026, D. Tarczay-Nehez'
 author = 'D. Tarczay-Nehez'
 
 # This will later be set automatically by the documentation workflow.
-release = ''
+release = '2.3.0'
+rapid_tag = 'v2.3.0'
 
 
 # -- General configuration ---------------------------------------------------

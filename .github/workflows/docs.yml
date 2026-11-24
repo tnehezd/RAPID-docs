@@ -26,6 +26,9 @@ jobs:
     permissions:
       contents: write
 
+    outputs:
+      rapid_tag: ${{ steps.rapid.outputs.tag }}
+
     steps:
       - name: Checkout RAPID-docs
         uses: actions/checkout@v4
@@ -33,18 +36,27 @@ jobs:
       - name: Set RAPID tag
         id: rapid
         shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_TAG: ${{ inputs.rapid_tag }}
+          PAYLOAD_TAG: ${{ github.event.client_payload.rapid_tag }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tag=${{ inputs.rapid_tag }}" >> "$GITHUB_OUTPUT"
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            tag="$INPUT_TAG"
           else
-            echo "tag=${{ github.event.client_payload.rapid_tag }}" >> "$GITHUB_OUTPUT"
+            tag="$PAYLOAD_TAG"
           fi
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]]; then
+            echo "::error::Expected a RAPID release tag such as v2.3.0."
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
       - name: Checkout RAPID
         uses: actions/checkout@v4
         with:
           repository: tnehezd/RAPID
-          ref: main
+          ref: refs/tags/${{ steps.rapid.outputs.tag }}
           path: RAPID
           fetch-depth: 0
 
@@ -71,6 +83,9 @@ jobs:
           sed -i \
             "s/^release = .*/release = '${RAPID_VERSION}'/" \
             docs/conf.py
+          sed -i \
+            "s/^rapid_tag = .*/rapid_tag = '${RAPID_TAG}'/" \
+            docs/conf.py
 
       - name: Generate Doxygen XML
         working-directory: docs
@@ -95,8 +110,6 @@ jobs:
           ls -la RAPID/
           echo "Notebook directory in this commit:"
           git -C RAPID ls-tree HEAD notebooks/
-          echo "Notebook directory in main:"
-          git -C RAPID ls-tree origin/main notebooks/ || true        
 
       - name: Sync RAPID notebooks
         run: |
@@ -148,12 +161,10 @@ jobs:
       - name: Set RAPID tag
         id: rapid
         shell: bash
+        env:
+          RAPID_TAG: ${{ needs.build-docs.outputs.rapid_tag }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tag=${{ inputs.rapid_tag }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tag=${{ github.event.client_payload.rapid_tag }}" >> "$GITHUB_OUTPUT"
-          fi
+          echo "tag=$RAPID_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Checkout RAPID-docs
         uses: actions/checkout@v4
@@ -194,5 +205,4 @@ jobs:
 
           git pull --rebase origin main
           git push origin HEAD:main
-
 

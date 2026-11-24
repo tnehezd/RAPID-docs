@@ -65,7 +65,11 @@ Then launch a simulation using a configuration file:
 
 .. code-block:: console
 
-  $ python3 run_simulation.py --config config.yaml
+  $ python3 run_simulation.py --config configs/config_dust.yaml
+
+The repository's ``configs/`` directory contains example YAML files.
+Alternatively, supply the path to your own configuration; ``config.yaml``
+is not created automatically.
 
 The wrapper locates the compiled executable, passes the parameters specified in the YAML file, and executes the simulation, outputting the results to the terminal and to the specified output directory.
 
@@ -92,7 +96,40 @@ A simulation can then be launched directly from the command line:
 
   $ rapidsim --config config.yaml
 
-The PyPI package provides pre-built binaries for supported platforms, eliminating the need to compile RAPID locally. Python 3.9 or newer is required.
+The PyPI package provides pre-built binaries for supported platforms, eliminating the need to compile RAPID locally. The current package metadata requires Python 3.8 or newer.
+
+Development-version options require a compatible RAPID binary and wrapper.
+Updating the wrapper source does not update an installed PyPI package or its
+bundled binary.
+
+Dust size modes
+---------------
+
+Dust can be evolved with a fixed grain radius or with growth and fragmentation.
+For fixed-size drift, disable growth and set
+``dust_parameters.one_size_particle_value_cm`` (``-largesize``, radius in cm).
+The ``rapidsim`` wrapper also accepts the alias ``large_size_particle_value_cm``.
+
+The development version additionally supports a prescribed constant Stokes
+number:
+
+.. code-block:: yaml
+
+   simulation_parameters:
+     enable_dust_drift: true
+     enable_dust_growth: false
+     enable_two_dust_populations: false
+   dust_parameters:
+     constant_stokes_number: 0.1
+
+This forwards ``-stokes 0.1``. Unlike fixed physical size, this mode adjusts
+the equivalent grain radius to the local gas surface density. The value must
+be finite and positive; omit the key to disable this mode. Do not combine it
+with a nonzero fixed grain size, an input profile or a built-in benchmark.
+
+``simulation_parameters.fragmentation_factor`` forwards ``-ffrag`` (default
+0.37) in the updated source wrapper and in ``rapidsim``. The factor applies
+to both turbulent and drift-induced fragmentation size barriers.
 
 
 Understanding YAML configuration files
@@ -235,6 +272,9 @@ The following table lists the YAML keys, their corresponding command-line switch
    * - ``dust_parameters.one_size_particle_value_cm``
      - ``-largesize``
      - ``1.0``
+   * - ``dust_parameters.constant_stokes_number`` (development version)
+     - ``-stokes``
+     - ``0.1`` (dimensionless; disabled if omitted)
    * - ``dust_parameters.dust_particle_density_g_cm3``
      - ``-pdensity``
      - ``1.6``

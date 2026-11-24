@@ -212,7 +212,7 @@ The dust surface density in cell :math:`i` is defined as
 
    \Sigma_{\mathrm{d}}(r_i)=\frac{M_i}{A_i},
 
-where :math:`M_i` is the total dust mass assigned to cell :math:`i`, and :math:`A_i=2\pi r_i\Delta r` is the area of the corresponding annulus.
+where :math:`M_i` is the total dust mass assigned to cell :math:`i`, and :math:`A_i=2\pi r_i\Delta r_i` is the area of the corresponding annulus.
 
 The routine ``calculateDustSurfaceDensity`` provides four mapping and smoothing schemes:
 
@@ -258,18 +258,18 @@ The routine ``calculateDustSurfaceDensity`` provides four mapping and smoothing 
 
 3. **Top-Hat Smoothing**
 
-   Applied *after* the initial CIC mapping, top-hat smoothing replaces each cell value with a three-point moving average over adjacent cells:
+   Applied *after* the initial CIC mapping, top-hat smoothing replaces each assigned cell mass with a three-point moving average over adjacent cells:
 
    .. math::
       :label: tophat_smoothing
 
-      \Sigma_{\mathrm{d}}^{\mathrm{TH}}(r_i)
+      M_i^{\mathrm{TH}}
       =
       \frac{1}{3}
       \left[
-      \Sigma_{\mathrm{d}}(r_{i-1})
-      +\Sigma_{\mathrm{d}}(r_i)
-      +\Sigma_{\mathrm{d}}(r_{i+1})
+      M_{i-1}
+      +M_i
+      +M_{i+1}
       \right].
 
    This suppresses high-frequency shot noise while retaining the overall shape of the dust distribution and the sharpness of concentration peaks.
@@ -286,23 +286,34 @@ The routine ``calculateDustSurfaceDensity`` provides four mapping and smoothing 
       \qquad
       \sigma=\sigma_{\mathrm{grid}}\Delta r_i.
 
-   The kernel is truncated beyond a user-specified cutoff, where :math:`|r-r_i|>\mathrm{cutoff}\,\sigma`. The smoothed surface density at :math:`r_i` is calculated as
+   The kernel is truncated beyond a user-specified cutoff, where :math:`|r-r_i|>\mathrm{cutoff}\,\sigma`. The smoothed mass at :math:`r_i` is calculated as
 
    .. math::
       :label: gaussian_smoothing
 
-      \Sigma_{\mathrm{d}}^{\mathrm{G}}(r_i)
+      M_i^{\mathrm{G}}
       =
       \frac{
-      \displaystyle\sum_{j=i-N}^{i+N}
-      \Sigma_{\mathrm{d}}(r_j)
+      \displaystyle\sum_{j\in\mathcal{K}_i}
+      M_j
       \exp\left[-\frac{(r_j-r_i)^2}{2\sigma^2}\right]
       }{
-      \displaystyle\sum_{j=i-N}^{i+N}
+      \displaystyle\sum_{j\in\mathcal{K}_i}
       \exp\left[-\frac{(r_j-r_i)^2}{2\sigma^2}\right]
       },
 
-   where the cutoff is applied according to the physical distance from the kernel center. This method provides controlled smoothing while retaining narrow structures.
+   where :math:`\mathcal{K}_i` contains physical grid points within the radial cutoff.
+
+Dust mass is deposited onto physical grid points and divided by the annular
+area after smoothing; the gas ghost-cell conditions are not applied to dust.
+At the edges, top-hat smoothing repeats the edge-cell mass for the missing
+neighbor, whereas Gaussian smoothing uses only in-domain points and
+normalizes by their retained weights.
+In the development version, particles reaching either domain edge are removed
+independently for each population: their represented mass is zeroed and
+excluded from subsequent deposition, with no reflection or external dust
+injection. Inner-edge loss means departure into the unresolved inner disk,
+not immediate stellar accretion. Earlier outputs are not corrected retroactively.
 
 To illustrate the numerical behavior and dissipation characteristics of these algorithms, the methods were tested on three artificial density profiles. 
 
@@ -311,6 +322,8 @@ The middle panel shows a pulse train that illustrates sampling artifacts. As par
 The right panel shows a narrow Gaussian density peak, representing dust accumulation near a local pressure maximum. This profile demonstrates how effectively each method preserves narrow spatial structures.
 
 The choice of mapping and smoothing scheme depends on the purpose of the simulation. Top-hat and Gaussian smoothing can fill gaps in the mapped dust surface density, but may artificially broaden sharp features and dampen density peaks. In contrast, unsmoothed NGP and CIC preserve sharper transitions and local extrema, but can retain the uneven peaks and gaps associated with sparse particle sampling.
+
+Particle-to-grid smoothing is not physical turbulent dust diffusion.
 
 Field-Dependent Boundary Condition Approach
 -------------------------------------------
@@ -415,4 +428,3 @@ The reflecting condition mirrors the field symmetrically across the active bound
    q_{N+1}=q_{N-1}.
 
 This condition prevents flux through the boundaries, but also reflects waves back into the computational domain.
-

@@ -22,6 +22,10 @@ Stay tuned for regular feature updates.
 
 ## Model Description
 
+Documentation release builds use the requested RAPID release tag, not `main`,
+for the C API and notebooks. The workflow records the same tag in
+`docs/conf.py`; Read the Docs uses that recorded tag for its RAPID checkout.
+
 RAPID is a trajectory-based Lagrangian model that tracks the motion of representative dust particles in the radial direction within an evolving 1D Eulerian gaseous disk. A key feature of this model is that the pressure maximum, which acts as a dust trap, is not a static element but a dynamically evolving phenomenon arising naturally in the vicinity of the embedded dead zone's inner and outer edges.
 
 This approach offers computational efficiency due to its 1D nature while providing an effective approximation of particle trajectories. Using RAPID, we can conduct parameter studies to investigate dust mass growth, particle trajectories, and the evolution of feeding zones around pressure bumps, aiming to understand the conditions that facilitate planetesimal formation in protoplanetary disks.
@@ -99,4 +103,3 @@ primaryClass = {astro-ph.EP},
     year = {2026},
     bdsk-url-1 = {https://doi.org/10.1007/s10569-026-10278-2}}
 }
-
