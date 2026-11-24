@@ -7,7 +7,7 @@ copyright = '2026, D. Tarczay-Nehez'
 author = 'D. Tarczay-Nehez'
 
 # This will later be set automatically by the documentation workflow.
-release = '2.2.7'
+release = ''
 
 
 # -- General configuration ---------------------------------------------------
