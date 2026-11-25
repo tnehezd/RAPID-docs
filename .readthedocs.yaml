@@ -11,7 +11,7 @@ build:
 
   jobs:
     pre_build:
-      - python -c "import runpy, subprocess; tag = runpy.run_path('docs/conf.py')['rapid_tag']; subprocess.run(['git', 'clone', '--depth', '1', '--branch', tag, '--single-branch', 'https://github.com/tnehezd/RAPID.git', 'RAPID'], check=True)"
+      - python docs/clone_rapid.py
       - cd docs && doxygen Doxyfile
 
 python:
