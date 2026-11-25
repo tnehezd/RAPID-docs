@@ -24,7 +24,9 @@ Stay tuned for regular feature updates.
 
 Documentation release builds use the requested RAPID release tag, not `main`,
 for the C API and notebooks. The workflow records the same tag in
-`docs/conf.py`; Read the Docs uses that recorded tag for its RAPID checkout.
+`docs/conf.py`; versioned Read the Docs builds use that recorded tag for
+their RAPID checkout. The Read the Docs `latest` build instead follows
+RAPID's `main` branch and is labelled as development documentation.
 
 RAPID is a trajectory-based Lagrangian model that tracks the motion of representative dust particles in the radial direction within an evolving 1D Eulerian gaseous disk. A key feature of this model is that the pressure maximum, which acts as a dust trap, is not a static element but a dynamically evolving phenomenon arising naturally in the vicinity of the embedded dead zone's inner and outer edges.
 

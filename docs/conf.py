@@ -10,6 +10,9 @@ author = 'D. Tarczay-Nehez'
 release = '2.3.0'
 rapid_tag = 'v2.3.0'
 
+if os.environ.get('READTHEDOCS_VERSION') == 'latest':
+    release = '2.3.0-dev'
+
 
 # -- General configuration ---------------------------------------------------
 
