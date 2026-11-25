@@ -45,6 +45,22 @@ EXCLUDE_PATTERNS = */build/* \
                    *.bak \
                    *.bck
 
+# Legacy two-population implementation is not part of the supported public API.
+EXCLUDE_SYMBOLS = isSecondaryPopulationEnabled \
+                  applyCoagulationMassTransfer \
+                  option_for_dust_secondary_population \
+                  two_pop_ratio \
+                  ratio_val \
+                  mic_val \
+                  micro_size_cm \
+                  micron_* \
+                  massmicradial_grid \
+                  size_micron_file \
+                  secondary_dust_mass \
+                  kMicronDustDensityProfilePrefix \
+                  kMicronDustDensityProfileFilePrefix \
+                  kMicronDustParticleSizeFileName
+
 
 # --- Source Browse related tags ---
 

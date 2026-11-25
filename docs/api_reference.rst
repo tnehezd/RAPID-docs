@@ -3,7 +3,10 @@
 API Reference
 =============
 
-This section provides a comprehensive, automatically generated API reference for the core C code components of the simulation. It details the functions, variables, and data structures used throughout the project, facilitating understanding and development.
+This section provides an automatically generated API reference for the core C
+components. Legacy two-population helpers and fields are excluded from this
+reference. Some shared internal routines retain legacy arguments for source
+compatibility; these do not enable an additional dust population.
 
 ----
 

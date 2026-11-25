@@ -24,6 +24,12 @@ dust accumulation and planetesimal formation nurseries with high computational e
 
 .. toctree::
    :maxdepth: 2
+   :caption: rapidsim Python package
+
+   rapidsim.rst
+
+.. toctree::
+   :maxdepth: 2
    :caption: The RAPID model
 
    physical_background.rst

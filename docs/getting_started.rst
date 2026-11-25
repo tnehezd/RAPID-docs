@@ -109,6 +109,9 @@ Development-version options require a compatible RAPID binary and wrapper.
 Updating the wrapper source does not update an installed PyPI package or its
 bundled binary.
 
+See :doc:`rapidsim` for the Python API, YAML-defined parameter grids,
+parallel runs, and differences from the source-repository wrapper.
+
 Plotting results
 ----------------
 
