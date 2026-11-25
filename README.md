@@ -4,7 +4,7 @@ This repository contains the source code for `RAPID` (Representative Approach fo
 
 The core of the code was originally written in C during my PhD between 2012 and 2015. It has since been restructured into a more modular form to improve its functionality and maintainability.
 
-#### ⚠️ 2.2.7 Version: Stable Structure – Ongoing Feature Development
+#### ⚠️ 2.3.0 Version: Stable Structure – Ongoing Feature Development
 
 The core structure of the codebase has now been finalized, and no further refactoring is planned. The architecture, naming conventions, and overall organization are stable and consistent with the [Coding Standard](docs/CodingStandard.md).
 
@@ -24,9 +24,7 @@ Stay tuned for regular feature updates.
 
 Documentation release builds use the requested RAPID release tag, not `main`,
 for the C API and notebooks. The workflow records the same tag in
-`docs/conf.py`; versioned Read the Docs builds use that recorded tag for
-their RAPID checkout. The Read the Docs `latest` build instead follows
-RAPID's `main` branch and is labelled as development documentation.
+`docs/conf.py`; Read the Docs uses that recorded tag for its RAPID checkout.
 
 RAPID is a trajectory-based Lagrangian model that tracks the motion of representative dust particles in the radial direction within an evolving 1D Eulerian gaseous disk. A key feature of this model is that the pressure maximum, which acts as a dust trap, is not a static element but a dynamically evolving phenomenon arising naturally in the vicinity of the embedded dead zone's inner and outer edges.
 
