@@ -37,11 +37,18 @@ The compiled executable can be run directly using command-line arguments. To dis
   $ ./bin/simulation --help
 
 
-The native simulation executable can be run directly. For example, the following command enables dust drift, dust growth, gas evolution, and two dust populations:
+The native simulation executable can be run directly. For example, the following command enables single-population dust drift, dust growth and gas evolution:
 
 .. code-block:: bash
 
-   ./bin/simulation -drift 1 -growth 1 -evol 1 -twopop 1
+   ./bin/simulation -drift 1 -growth 1 -evol 1
+
+Dust is represented by one population carrying the full initialized dust mass.
+New initial dust profiles contain four columns: particle ID, radius in AU,
+represented dust mass in solar masses, and grain radius in cm. There is one
+mass column holding the full dust mass.
+Legacy six-column initial particle profiles must be regenerated before use
+with the development binary; historical snapshot plots remain supported.
 
 To display all available command-line options, run:
 
@@ -102,6 +109,20 @@ Development-version options require a compatible RAPID binary and wrapper.
 Updating the wrapper source does not update an installed PyPI package or its
 bundled binary.
 
+Plotting results
+----------------
+
+The source repository includes a standalone plotter for ASCII and HDF5
+snapshots from gas-only or dust-evolution runs:
+
+.. code-block:: console
+
+   $ python3 plot_output.py RUN_DIR -o overview.png
+   $ python3 plot_output.py RUN_DIR --kind heatmap -o heatmap.png
+
+See :doc:`plotting` for dependencies, plot options, initial-density
+normalization, and the interpretation of density and particle panels.
+
 Dust size modes
 ---------------
 
@@ -118,7 +139,6 @@ number:
    simulation_parameters:
      enable_dust_drift: true
      enable_dust_growth: false
-     enable_two_dust_populations: false
    dust_parameters:
      constant_stokes_number: 0.1
 
@@ -146,12 +166,18 @@ The YAML configuration file contains the following sections:
 * ``disk_parameters``: grid properties, initial gas surface density, disk geometry, viscosity, stellar mass, density floors, and photoevaporation settings.
 * ``boundary_conditions``: inner and outer boundary conditions.
 * ``deadzone_parameters``: dead-zone radii, transition widths, and viscosity reduction.
-* ``dust_parameters``: dust-to-gas ratio, particle sizes, population mass ratio, particle density, and smoothing settings.
+* ``dust_parameters``: dust-to-gas ratio, particle size, particle density, and smoothing settings.
 * ``output_parameters``: output directory and file format.
 * ``time_parameters``: time step, total simulation time, and output frequency.
 * ``log_parameters``: logging verbosity and terminal status panels.
 
 The following table lists the YAML keys, their corresponding command-line switches, and example values.
+
+The legacy YAML keys ``deadzone_inner_transition_width_mult`` and
+``deadzone_outer_transition_width_mult`` are forwarded directly as transition
+widths in AU; the wrapper does not multiply them by the local scale height.
+For an initialized power-law profile, ``sigma_profile_exponent = p`` gives
+:math:`\Sigma \propto r^{-|p|}`.
 
 .. list-table:: YAML configuration keys and corresponding CLI switches
    :header-rows: 1
@@ -169,9 +195,6 @@ The following table lists the YAML keys, their corresponding command-line switch
      - ``true``
    * - ``simulation_parameters.enable_gas_evolution``
      - ``-evol``
-     - ``true``
-   * - ``simulation_parameters.enable_two_dust_populations``
-     - ``-twopop``
      - ``true``
    * - ``simulation_parameters.fragmentation_velocity``
      - ``-ufrag``
@@ -263,12 +286,6 @@ The following table lists the YAML keys, their corresponding command-line switch
    * - ``dust_parameters.initial_dust_to_gas_ratio``
      - ``-eps``
      - ``0.01``
-   * - ``dust_parameters.population_one_mass_ratio``
-     - ``-ratio``
-     - ``0.85``
-   * - ``dust_parameters.micro_particle_size_cm``
-     - ``-micsize``
-     - ``0.0001``
    * - ``dust_parameters.one_size_particle_value_cm``
      - ``-largesize``
      - ``1.0``
@@ -322,7 +339,6 @@ A typical YAML configuration file should be structured in a nested format as fol
         enable_dust_drift:           false     
         enable_dust_growth:          false     
         enable_gas_evolution:        true    
-        enable_two_dust_populations: false 
         enable_photoevaporation:     false      
         
     disk_parameters:
@@ -402,14 +418,10 @@ ASCII output may contain files such as:
    density_profile_00000000.dat
    dust_size_evolution_00000000.dat
    dust_density_profile_00000000.dat
-   micron_dust_size_evolution_00000000.dat
-   dust_micron_density_profile_00000000.dat
    ...
    density_profile_00090000.dat
    dust_size_evolution_00090000.dat
    dust_density_profile_00090000.dat
-   micron_dust_size_evolution_00090000.dat
-   dust_micron_density_profile_00090000.dat
    ...
 
 The ``ascii`` output format stores radial profiles as plain numerical text files that can be inspected with a text editor or processed using standard command-line tools. The ``hdf5`` format stores the simulation state in a structured binary format, allowing compact storage and efficient access to individual datasets during post-processing.
@@ -515,4 +527,4 @@ Snapshots can also be read and analyzed using ``h5py``:
    with h5py.File("snapshot_00000000.h5", "r") as f:
        print(f["gas_grid/surface_density"][:10])
 
-If dust evolution is enabled in a disk with an embedded dead zone, RAPID may also produce the diagnostic file ``mass_accumulation_dze_edge.h5`` in the ``LOGS/`` directory. This file stores the time evolution of pressure-trap properties in the ``trap_evolution`` group. Its datasets include ``primary_mass``, ``secondary_mass``, ``total_mass``, ``trap_position``, and ``time``. They track the accumulated masses of the primary and secondary dust populations at the pressure-trap location, along with the trap position and simulation time. The extendable datasets are updated at each snapshot output, so their entries correspond to the simulation times at which snapshots are written.
+If dust evolution is enabled in a disk with an embedded dead zone, RAPID may also produce the diagnostic file ``mass_accumulation_dze_edge.h5`` in the ``LOGS/`` directory. The ``trap_evolution`` group records the accumulated dust mass (``total_mass``), trap position (``trap_position``), and simulation time (``time``). The extendable datasets are updated at each snapshot output.

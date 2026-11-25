@@ -310,7 +310,7 @@ At the edges, top-hat smoothing repeats the edge-cell mass for the missing
 neighbor, whereas Gaussian smoothing uses only in-domain points and
 normalizes by their retained weights.
 In the development version, particles reaching either domain edge are removed
-independently for each population: their represented mass is zeroed and
+with their represented mass zeroed and
 excluded from subsequent deposition, with no reflection or external dust
 injection. Inner-edge loss means departure into the unresolved inner disk,
 not immediate stellar accretion. Earlier outputs are not corrected retroactively.

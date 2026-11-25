@@ -20,6 +20,7 @@ dust accumulation and planetesimal formation nurseries with high computational e
    self          
    intro.rst
    getting_started.rst
+   plotting.rst
 
 .. toctree::
    :maxdepth: 2
